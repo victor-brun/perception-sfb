@@ -1,0 +1,666 @@
+---
+title: "Cleaning the matrix of answers from perception interviews"
+author: "Victor Brun"
+date: "07/07/2020"
+output: html_document
+---
+
+The objective of this script is to: 
+- Anonymize answers, clean dataset and format data
+- Classify individual answers into new categories to simplify analyses
+
+# 1. Importing data
+
+```{r message=FALSE}
+rm(list=ls()) ; library(tidyr) ; library(dplyr)
+
+df = read.csv("./../data/general_quanti.csv", sep=";")
+```
+
+
+# 2. Cleaning and formatting data
+
+- Fisherman: yes/no
+```{r}
+df = df %>%
+  mutate(Fisherman = case_when(Job_1 == "Fisherman" ~ "Yes",
+                               Job_2 == "Fisherman" ~ "Yes", 
+                               TRUE ~ "No"))
+
+```
+
+- Selecting variables of interest
+```{r}
+df2 = df %>%
+  select(ID, Session, Sex, Residence, Age, Job_1, Job_2, Fisherman)
+```
+
+# 3. New categories
+
+## 3.1 Future
+```{r}
+df2 = df2 %>%
+  mutate(future_agriculture = case_when(df$X7_agriculture==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_alternative_livelihood = case_when(df$X7_livelihood==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_climate_change = case_when(df$X7_climatechange==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_deforestation = case_when(df$X7_deforest==1 ~ 1,
+                                         TRUE ~ 0))
+
+df2 = df2 %>%
+  mutate(future_demography = case_when(df$X7_demography==1 ~ 1,
+                                         TRUE ~ 0))
+
+df2 = df2 %>%
+  mutate(future_destructive_tourism = case_when(df$X7_badtourism==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_development = case_when(df$X7_help==1 ~ 1,
+                                        df$X7_development==1 ~ 1,
+                                        df$X7_nohunger==1 ~ 1,
+                                        df$X7_nopoverty==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_discipline= case_when(df$X7_discipline==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_education = case_when(df$X7_education==1 ~ 1,
+                                      df$X7_awareness==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_enforcement = case_when(df$X7_guard==1 ~ 1,
+                                      df$X7_noillegal==1 ~ 1,
+                                      df$X7_law==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_example = case_when(df$X7_example==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_illegal_fishing = case_when(df$X7_illegals==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_inequalities = case_when(df$X7_inequality==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_mpa = case_when(df$X7_mpa==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_natural_events = case_when(df$X7_events==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_no_answer = case_when(df$X7no==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_no_corals = case_when(df$X7_brokencorals==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_no_fish = case_when(df$X7_nofish==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_no_resources = case_when(df$X7_nonatres==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_participation = case_when(df$X7_cooperate==1 ~ 1,
+                                          df$X7_link==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_poverty = case_when(df$X7_poverty==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_sustainability = case_when(df$X7_resources==1 ~ 1,
+                                           df$X7_conservation==1 ~ 1,
+                                           df$X7_sustainability==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(future_tourism_development = case_when(df$X7_tourism==1 ~ 1,
+                                         TRUE ~ 0))
+
+
+
+
+
+```
+
+
+## 3.2 Issues
+
+```{r}
+df2 = df2 %>%
+  mutate(issue_badluck = case_when(df$X3_noluck==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_climatechange = case_when(df$X1_climatechange==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_community_collaboration = case_when(df$X3_collaboration==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_community_empowerment = case_when(df$X3_empower==1 ~ 1,
+                                         TRUE ~ 0))
+
+df2 = df2 %>%
+  mutate(issue_compressor_fishing = case_when(df$X1_compressor==1 ~ 1,
+                                              df$X3_compressor==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_connectivity = case_when(df$X3_connectivity==1 ~ 1,
+                                         TRUE ~ 0))
+
+df2 = df2 %>%
+  mutate(issue_crops = case_when(df$X1_pests==1 ~ 1,
+                                 df$X1_fertilizers==1 ~ 1,
+                                 df$X1_plantations==1 ~ 1,
+                                 TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_cutting_mangroves = case_when(df$X1_mangroves==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_cyanide_fishing = case_when(df$X1_cyanide==1 ~ 1,
+                                           df$X3_cyanide==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_deforestation = case_when(df$X1_logging==1 ~ 1,
+                                         df$X1_kaingin==1 ~ 1,
+                                         df$X1_forest==1 ~ 1,
+                                         TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_degraded_ecosystems = case_when(df$X3_brokencorals==1 ~ 1,
+                                               df$X3_nomangroves==1 ~ 1,
+                                               TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_demography = case_when(df$X1_demography==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_dependence_resource = case_when(df$X1_dependance==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_deterioration_resources = case_when(df$X1_natres==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_dynamite_fishing = case_when(df$X1_dynamite==1 ~ 1,
+                                            df$X3_dynamite==1 ~ 1,
+                                            TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_education = case_when(df$X1_education==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_erosion = case_when(df$X1_erosion==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_fauna = case_when(df$X1_fauna==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_few_fish = case_when(df$X1_fewfish==1 ~ 1,
+                                    df$X3_fewfish==1 ~ 1,
+                                    df$X3_smallfish==1 ~ 1,
+                                    df$X3_farfish==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_foreign_fishermen = case_when(df$X3_otherbarangay==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_illegal_fishing = case_when(df$X1_illegal==1 ~ 1,
+                                           df$X3_illegal==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_illegalfishing_decrease = case_when(df$X3_illegaldec==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_inequalities = case_when(df$X3_inequality==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_infrastructure = case_when(df$X1_infrastructure==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_lowprice_fish = case_when(df$X3_lowprice==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_mining = case_when(df$X1_mining==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_mpa = case_when(df$X3_mpa==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_natural_events = case_when(df$X1_events==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_nets_smallmesh = case_when(df$X1_smallnet==1 ~ 1,
+                                          df$X3_smallnet==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_no = case_when(df$X1_no==1 ~ 1,
+                              df$X3_no==1 ~ 1,
+                              TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_overfishing= case_when(df$X1_comfishing==1 ~ 1,
+                                      df$X3_overfishing==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_pearlfarms = case_when(df$X3_pearlfarms==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_policy = case_when(df$X1_policy==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_political_action = case_when(df$X3_lackgovernment==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_pollution = case_when(df$X1_plastic==1 ~ 1,
+                                     df$X1_wastew==1 ~ 1,
+                                     df$X1_trash==1 ~ 1,
+                                     df$X1_pesticides==1 ~ 1,
+                                     df$X3_pollution==1 ~ 1,
+                                     TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_poverty = case_when(df$X1_poverty==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_respect_mutual = case_when(df$X3_respect==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_respect_law = case_when(df$X3_closedseasons==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_thefts = case_when(df$X3_thefts==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_tourism = case_when(df$X1_tourism==1 ~ 1,
+                                   df$X3_tourism==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_trade_fish = case_when(df$X3_trade==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_trawl_fishing = case_when(df$X3_trawl==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_water_access = case_when(df$X1_water==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(issue_weather = case_when(df$X3_weather==1 ~ 1,
+                                      TRUE ~ 0))
+
+```
+
+## 3.3 MPAs
+```{r}
+df2 = df2 %>%
+  mutate(mpa_against_foreign_fishermen = case_when(df$X5a_strangers==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_against_illegal_fishermen = case_when(df$X5a_illegals==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_coral = case_when(df$X5a_corals==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_ecosystems = case_when(df$X5b_ecosystems==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_fish = case_when(df$X5a_fish==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_fishermen = case_when(df$X5b_fishermen==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_government = case_when(df$X5b_government==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_locals = case_when(df$X5b_locals==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_managers = case_when(df$X5b_mfarmc==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_nextgeneration = case_when(df$X5b_nextgen==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_noidea = case_when(df$X5b_no==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_otherpeople = case_when(df$X5b_otherpeople==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_owners = case_when(df$X5b_owner==1 ~ 1,
+                                        df$X5b_staff==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_poverty = case_when(df$X5b_poors==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_shells = case_when(df$X5a_shells==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_otherpeople = case_when(df$X5b_otherpeople==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_tourists = case_when(df$X5b_tourists==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_connectivity = case_when(df$X5a_connectivity==1 ~ 1,
+                                              df$X5b_connectivity==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_fishfeeding = case_when(df$X5a_feedfish==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_benefit_tourists = case_when(df$X5b_tourists==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_goal_biodiversity = case_when(df$X5a_biodiversity==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_goal_economy = case_when(df$X5a_economy==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_goal_fishery = case_when(df$X5a_fishery==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_goal_food = case_when(df$X5a_food==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_goal_noidea = case_when(df$X5a_no==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_goal_people = case_when(df$X5a_people==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_goal_sea = case_when(df$X5a_sea==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_goal_tourism = case_when(df$X5a_tourism==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_improve_ecosystem = case_when(df$X5a_improve==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_natural_resources = case_when(df$X5a_natres==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_capacity = case_when(df$X5c_capacity==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_compliance = case_when(df$X5c_comply==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_education = case_when(df$X5c_education==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_funds = case_when(df$X5c_funds==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_incnlusiveness = case_when(df$X5c_include==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_law = case_when(df$X5c_law==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_management = case_when(df$X5c_manpower==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_monitoring = case_when(df$X5c_monitor==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_no_outsiders = case_when(df$X5c_nooutsiders==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_noidea = case_when(df$X5c_no==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_no_otherthreas = case_when(df$X5c_otherthreats==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_patrol = case_when(df$X5c_guard==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_political_support = case_when(df$X5c_officials==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_people_support = case_when(df$X5c_support==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_need_yields= case_when(df$X5c_yield==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_nursery = case_when(df$X5a_nursery==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_patrolling = case_when(df$X5a_guard==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_protect = case_when(df$X5a_protect==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_restore_ecosystem = case_when(df$X5a_restore==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_spillover = case_when(df$X5a_spillover==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(mpa_sustainability = case_when(df$X5a_sustainability==1 ~ 1,
+                                      TRUE ~ 0))
+```
+
+## 3.4 NGO (Sulubaai)
+```{r}
+df2 = df2 %>%
+  mutate(ngo_advice_develop = case_when(df$X6b_morehelp==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_advice_enforcement = case_when(df$X6b_illegals==1 ~ 1,
+                                            df$X6c_noothers==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_advice_involve = case_when(df$X6b_involve==1 ~ 1,
+                                        df$X6b_alink==1 ~ 1,
+                                        df$X6c_link==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_capacity = case_when(df$X6a_development==1 ~ 1,
+                                  df$X6a_fund==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_conservation = case_when(df$X6a_conservation==1 ~ 1,
+                                            df$X6a_fish==1 ~ 1,
+                                            df$X6a_restoration==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_education = case_when(df$X6a_education==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_employment = case_when(df$X6a_employ==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_enforcement = case_when(df$X6a_illegals==1 ~ 1,
+                                     df$X6a_guard==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_example = case_when(df$X6a_example==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_good_opinion = case_when(df$X6b_good==1 ~ 1,
+                                      df$X6b_efficient==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_help = case_when(df$X6a_help==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_mpa = case_when(df$X6a_mpa==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_mpa_agree = case_when(df$X6c_agree==1 ~ 1,
+                                   df$X6c_help==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_mpa_develop = case_when(df$X6c_bigger==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_mpa_efficient = case_when(df$X6c_morefish==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_mpa_noopinion= case_when(df$X6c_no==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_goal_noopinion = case_when(df$X6a_no==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_no_advice = case_when(df$X6b_no==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_fight_pollution = case_when(df$X6a_trash==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(ngo_water_access = case_when(df$X6a_water==1 ~ 1,
+                                      TRUE ~ 0))
+```
+
+## 3.5 Solutions
+
+```{r}
+df2 = df2 %>%
+  mutate(solution_alternative_livelihood = case_when(df$X4_livelihood==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_aquaculture = case_when(df$X4_aquaculture==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_arrest = case_when(df$X4_arrest==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_capacity_building = case_when(df$X4_capacity==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_collaboration = case_when(df$X4_include==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_compliance = case_when(df$X4_stop==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_diminish_fishing = case_when(df$X4_diminishfish==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_education = case_when(df$X4_education==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_enforcement = case_when(df$X4_enforce==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_exterior_help = case_when(df$X4_help==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_fishban = case_when(df$X4_fishban==1 ~ 1,
+                                      df$X4_closedseason==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_fisherfolk_organization = case_when(df$X4_bfarmc==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_funding = case_when(df$X4_funding==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_law = case_when(df$X4_law==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_mpa = case_when(df$X4_mpa==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_no_idea = case_when(df$X4_no==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_patrolling = case_when(df$X4_guard==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_protection = case_when(df$X4_protection==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_restoration = case_when(df$X4_restoration==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_tourism = case_when(df$X4_tourism==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_village_officials = case_when(df$X4_officials==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(solution_wastewater_management = case_when(df$X4_wastem==1 ~ 1,
+                                      TRUE ~ 0))
+```
+
+
+## 3.6 Values
+```{r}
+df2 = df2 %>%
+  mutate(value_biodiversity = case_when(df$X2_biodiversity==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_carbon_capture = case_when(df$X2_carbon==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_connectivity = case_when(df$X2_connectivity==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_food = case_when(df$X2_food==1 ~ 1,
+                                df$X2_protein==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_health = case_when(df$X2_health==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_livelihood = case_when(df$X2_livelihood==1 ~ 1,
+                                      df$X2_fishermen==1 ~ 1,
+                                      df$X2_seaweeds==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_money = case_when(df$X2_money==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_nature = case_when(df$X2_nature==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_next_generation = case_when(df$X2_nextgen==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_health = case_when(df$X2_health==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_no_idea = case_when(df$X2_no==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_religious = case_when(df$X2_godgift==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_resources = case_when(df$X2_natres==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_services = case_when(df$X2_services==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_species = case_when(df$X2_species==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_tourism = case_when(df$X2_tourism==1 ~ 1,
+                                      TRUE ~ 0))
+df2 = df2 %>%
+  mutate(value_tradition = case_when(df$X2_tradition==1 ~ 1,
+                                      TRUE ~ 0))
+```
+
+
+# 4. Exporting cleaned matrix and categories
+- Matrix of answers
+```{r}
+write.csv(df2, "./../output/general_matrix.csv", row.names = FALSE)
+```
+- Categories as a tab with only one row
+```{r}
+nodes = data.frame(c(colnames(df2)))
+write.csv(nodes, "./../output/nodes.csv", row.names=FALSE)
+```
+
+
+

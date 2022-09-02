@@ -4,7 +4,7 @@
 
 rm(list=ls()) ; library(tidyr) ; library(dplyr)
 
-df = read.csv("data/general_quanti.csv", sep=";")
+df = read.csv("data/df_quanti.csv", sep=";")
 
 # Adding a "Fisherman" variable for people that declared it as a main or secondary occupation
 df = df %>%
@@ -15,61 +15,20 @@ df = df %>%
 # Adding a "Group" variable for which 1 == villages where Sulubaai has been active 
 # and 2 == villages for which Sulubaai has not
 df = df %>%
-  mutate(Group = case_when(df$Residence == "Batas" ~ 0,
-                           df$Residence == "Mabini" ~ 0,
-                           df$Residence == "Silangga" ~ 0,
-                           TRUE ~ 1))
+  mutate(Involved_project = case_when(df$Residence == "Batas" ~ "No",
+                                      df$Residence == "Mabini" ~ "No",
+                                      df$Residence == "Silangga" ~ "No",
+                                      TRUE ~ "Yes"))
 
 # Creating df2 that will serve as the dataframe to summarize themes
 df2 = df %>%
-  select(ID, Session, Sex, Residence, Age, Job_1, Job_2, Fisherman, Group)
+  select(ID, Session, Sex, Residence, Age, Job_1, Job_2, Fisherman, Involved_project)
 
 ### ADDING VARIABLES BY GATHERING DIFFERENT INDIVIDUAL PERCEPTIONS
 
-## 1) FUTURE ----
+## 1) ENVIRONMENTAL STRESSORS  ----
 
-# Alternative livelihood options
-df2 = df2 %>%
-  mutate(future_alternatives = case_when(df$X7_livelihood==1 ~ 1,
-                                        df$X7_tourism==1 ~ 1,
-                                        df$X7_agriculture==1 ~ 1,
-                                        TRUE ~ 0))
-
-# Economic, social and environmental sustainability / conservation
-df2 = df2 %>%
-  mutate(future_sustainability = case_when(df$X7_conservation==1 ~ 1,
-                                        df$X7_sustainability==1 ~ 1,
-                                        df$X7_resources==1 ~ 1,
-                                        df$X7_guard==1 ~ 1,
-                                        df$X7_noillegal==1 ~ 1,
-                                        df$X7_development==1 ~ 1,
-                                        df$X7_education==1 ~ 1,
-                                        df$X7_awareness==1 ~ 1,
-                                        df$X7_mpa==1 ~ 1,
-                                        df$X7_nopoverty==1 ~ 1,
-                                        df$X7_example==1 ~ 1,
-                                        df$X7_law==1 ~ 1,
-                                        TRUE ~ 0))
-# More ecosystem degradation and less livelihood in the future
-df2 = df2 %>%
-  mutate(future_unsustainability = case_when(df$X7_climatechange==1 ~ 1,
-                                                  df$X7_demography==1 ~ 1,
-                                                  df$X7_inequality==1 ~ 1,
-                                                  df$X7_illegals==1 ~ 1,
-                                                  df$X7_nofish==1 ~ 1,
-                                                  df$X7_nonatres==1 ~ 1,
-                                                  df$X7_brokencorals==1 ~ 1,
-                                                  df$X7_sustainability==1 ~ 1,
-                                                  df$X7_deforest==1 ~ 1,
-                                                  df$X7_poverty==1 ~ 1,
-                                                  df$X7_nolivelihood==1 ~ 1,
-                                                  df$X7_badtourism==1 ~ 1,
-                                                  TRUE ~ 0))
-
-
-## ISSUES ----
-
-# Destructive fishing practices
+# Destructive and illegal fishing practices
 df2 = df2 %>%
   mutate(issue_destructive_practices = case_when(df$X1_illegal==1 ~ 1,
                                            df$X1_dynamite==1 ~ 1,

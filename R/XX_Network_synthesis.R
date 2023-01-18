@@ -5,13 +5,13 @@ rm(list=ls()) ; library(GGally) ; library(geomnet) ; library(ggplot2) ; library(
 library(fishualize) ; library(igraph)  ; library(dplyr)  ; library(network) 
 library(sna) ; library(intergraph) ; library(abind) ; library(tidyr) ; library(questionr)
 
-df <-  read.csv("output/general_matrix_synthesis.csv")
+df <-  read.csv("Data/general_matrix_synthesis.csv")
 
 # PLOTTING BIPARTITE NETWORK -----
 
 # Creating two dataframes: an adjacency matrix and a df with information about the nodes
 links <-  df %>%
-  select(!c(Session, Sex, Residence, Age, Job_1, Job_2, Fisherman, Group, ngo_knowledge))
+  select(!c(Session, Gender, Residence, Age, Job_1, Job_2, Fisher, Knowledge_NGO))
 nodes <-  read.csv("data/nodes2.csv", sep=";")
 nodes$Knowledge = as.factor(nodes$Knowledge)
 

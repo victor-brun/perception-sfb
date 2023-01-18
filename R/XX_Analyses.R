@@ -1,37 +1,19 @@
 ### Victor BRUN
 ### Created 08-03-2021
-### Analysis of synthesized themes from "perception SFB" data
+### Analysis of synthesized themes from "perception MPAs" data
+
+## Packages and data ----
 
 rm(list=ls()) ; library(tidyverse) ; library(ggplot2) ; library(questionr)
 
-df = read.csv("output/general_matrix_synthesis.csv")
+df = read.csv("Data/general_matrix_synthesis.csv")
 
-# Filtering out Taytay decision-makers and scientists
-df = df %>%
-  filter(!Residence %in% c("Taytay", "Puerto Princesa"))
-
-# Recoding
-
-df$ngo_knowledge <- df$ngo_knowledge %>%
-  as.character() %>%
-  fct_recode(
-    "No previous knowledge of the NGO" = "0",
-    "Previous knowledge of the NGO" = "1"
-  )
-
-# Number of respondents in each category (knowledge of NGO and no knowledge)
-df %>%
-  filter(ngo_knowledge == 0) %>%
-  NROW() #34
-df %>%
-  filter(ngo_knowledge == 1) %>%
-  NROW() #24
 
 ### CREATING DATAFRAMES ----
 
 # Creating "df2" summing all the answers per group
 df2 = df %>% 
-  group_by(ngo_knowledge) %>%
+  group_by(Knowledge_NGO) %>%
   select(10:31) %>%
   summarise_all(sum)
 

@@ -4,7 +4,9 @@
 
 rm(list=ls()) ; library(tidyr) ; library(dplyr)
 
-df = read.csv("data/df_quanti.csv", sep=",")
+df <- read.csv("data/df_quanti.csv", sep=",")
+
+df <- df[,1:which(colnames(df)=="X6_sulubaai")] # Removing perceptions on the future and specific questions on NGO
 
 ## ADDING VARIABLES ----
 
@@ -227,7 +229,6 @@ df2 = df2 %>%
                                                          df$X4_funding==1 ~ 1,
                                                          df$X4_include==1 ~ 1,
                                                          df$X4_externalhelp==1 ~ 1,
-                                                         df$X4_capacity==1 ~ 1,
                                                          df$X4_aquaculture==1 ~ 1,
                                                          TRUE ~ 0))
 
@@ -271,7 +272,6 @@ df2 = df2 %>%
 df2 = df2 %>%
   mutate(mpas_for_locals = case_when(df$X5b_locals==1 ~ 1,
                                      df$X5a_people==1 ~ 1,
-                                     df$X5b_fishers==1 ~ 1,
                                      df$X5b_poors==1 ~ 1,
                                      df$X5a_economy==1 ~ 1,
                                      df$X5b_nextgen==1 ~ 1,
@@ -297,7 +297,7 @@ df2 = df2 %>%
 
 # MPAs need capacity
 df2 = df2 %>%
-  mutate(mpas_coercive = case_when(df$X5c_guard==1 ~ 1,
+  mutate(mpas_need_capacity = case_when(df$X5c_guard==1 ~ 1,
                                    df$X5c_manage==1 ~ 1,
                                    df$X5c_monitor==1 ~ 1,
                                    df$X5c_include==1 ~ 1,
@@ -308,11 +308,12 @@ df2 = df2 %>%
 
 # MPAs need compliance and support
 df2 = df2 %>%
-  mutate(mpas_coercive = case_when(df$X5c_comply==1 ~ 1,
+  mutate(mpas_need_support = case_when(df$X5c_comply==1 ~ 1,
                                    df$X5c_support==1 ~ 1,
                                    df$X5c_officials==1 ~ 1,
                                    df$X5c_awareness==1 ~ 1,
                                    TRUE ~ 0))
 
 ### EXPORTING CSV FILE
+write.csv(df, "Data/general_matrix_allperceptions.csv", row.names = FALSE)
 write.csv(df2, "Data/general_matrix_synthesis.csv", row.names = FALSE)

@@ -13,7 +13,8 @@ rm(list=ls()) ; library(tidyverse) ; library(ggplot2) ; library(plyr)
 library(vegan) ; library(glue)
 
 # Data
-df <-  read.csv("./../Data/general_matrix_synthesis.csv")
+df <-  read.csv("./../Data/general_matrix_synthesis.csv") # Matrix of perceptions grouped in themes
+df_all <- read.csv("./../Data/general_matrix_allperceptions.csv") # Matrix of all ungrouped perceptions (n = 149)
 ```
 
 # 2. Descriptive statistics
@@ -34,7 +35,7 @@ table(df$Knowledge_MPA) # No = 5, Yes = 61
 
 # Dataframe summary of all perceptions
 df_summary <-  df %>% 
-  select(13:37) %>%
+  select(13:39) %>%
   summarise_all(sum)
 df_summary <-  t(df_summary) %>% data.frame
 colnames(df_summary) <- "Total"
@@ -63,8 +64,10 @@ df_summary$Perception <- factor(df_summary$Perception, levels = c("value_livelih
                                                     "solution_no",
                                                     "mpas_ecological_sustainability",
                                                     "mpas_for_locals",
+                                                    "mpas_need_capacity",
                                                     "mpas_fishery",
                                                     "mpas_coercive",
+                                                    "mpas_need_support",
                                                     "mpas_for_external"))
 df_summary$Perception <- fct_rev(df_summary$Perception)
 
@@ -95,15 +98,17 @@ df_summary$Perception <- fct_recode(df_summary$Perception,
                      "Landbased stressors" = "issue_landbased_stressors",
                      "Agriculture and water" = "issue_agriculture_water",
                      "Marine conservation" = "issue_conservation",
-                     "Coercive social interventions" = "solution_sociocentric_coercive",
+                     "Legal instruments & enforcement" = "solution_sociocentric_coercive",
                      "Capacity & alternative livelihoods" = "solution_capacity_alternative",
                      "Ecosystem-based interventions" = "solution_ecocentric",
                      "No option identified" = "solution_no",
                      "MPAs for ecological sustainability" = "mpas_ecological_sustainability",
                      "MPAs for local actors" = "mpas_for_locals",
-                     "MPAs for fishery" = "mpas_fishery",
+                     "MPAs for fisheries & food" = "mpas_fishery",
                      "MPAs as coercive instruments" = "mpas_coercive",
                      "MPAs for external actors" = "mpas_for_external",
+                     "MPAs need capacity" = "mpas_need_capacity",
+                     "MPAs need compliance & support" = "mpas_need_support",
 )
 
 # Barplot

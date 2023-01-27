@@ -128,7 +128,7 @@ ggplot(df_summary) +
 # Creating "df2" summing all the answers per group
 df2 = df %>% 
   group_by(Knowledge_NGO) %>%
-  select(13:37) %>%
+  select(13:39) %>%
   summarise_all(sum) %>%
   t() %>%
   data.frame 
@@ -141,30 +141,32 @@ df2[,2] <- df2[,2]/28
 # Relevel factors
 df2$Perception = rownames(df2)
 df2$Perception <- factor(df2$Perception, levels = c("value_livelihood",
-                                    "value_food",
-                                    "value_cultural",
-                                    "value_services",
-                                    "value_intrinsic",
-                                    "value_no_value",
-                                    "issue_destructive_practices",
-                                    "issue_depletion_resources",
-                                    "issue_deforestation",
-                                    "issue_social_causes",
-                                    "issue_pollution",
-                                    "issue_climate_disasters",
-                                    "issue_no",
-                                    "issue_landbased_stressors",
-                                    "issue_agriculture_water",
-                                    "issue_conservation",
-                                    "solution_sociocentric_coercive",
-                                    "solution_capacity_alternative",
-                                    "solution_ecocentric",
-                                    "solution_no",
-                                    "mpas_ecological_sustainability",
-                                    "mpas_for_locals",
-                                    "mpas_fishery",
-                                    "mpas_coercive",
-                                    "mpas_for_external"))
+                                                    "value_food",
+                                                    "value_cultural",
+                                                    "value_services",
+                                                    "value_intrinsic",
+                                                    "value_no_value",
+                                                    "issue_destructive_practices",
+                                                    "issue_depletion_resources",
+                                                    "issue_deforestation",
+                                                    "issue_social_causes",
+                                                    "issue_pollution",
+                                                    "issue_climate_disasters",
+                                                    "issue_no",
+                                                    "issue_landbased_stressors",
+                                                    "issue_agriculture_water",
+                                                    "issue_conservation",
+                                                    "solution_sociocentric_coercive",
+                                                    "solution_capacity_alternative",
+                                                    "solution_ecocentric",
+                                                    "solution_no",
+                                                    "mpas_ecological_sustainability",
+                                                    "mpas_for_locals",
+                                                    "mpas_need_capacity",
+                                                    "mpas_fishery",
+                                                    "mpas_coercive",
+                                                    "mpas_need_support",
+                                                    "mpas_for_external"))
 df2$Perception <- fct_rev(df2$Perception)
 
 # Recoding factors
@@ -185,15 +187,17 @@ df2$Perception <- fct_recode(df2$Perception,
                      "Landbased stressors" = "issue_landbased_stressors",
                      "Agriculture and water" = "issue_agriculture_water",
                      "Marine conservation" = "issue_conservation",
-                     "Coercive social interventions" = "solution_sociocentric_coercive",
+                     "Legal instruments & enforcement" = "solution_sociocentric_coercive",
                      "Capacity & alternative livelihoods" = "solution_capacity_alternative",
                      "Ecosystem-based interventions" = "solution_ecocentric",
                      "No option identified" = "solution_no",
                      "MPAs for ecological sustainability" = "mpas_ecological_sustainability",
                      "MPAs for local actors" = "mpas_for_locals",
-                     "MPAs for fishery" = "mpas_fishery",
+                     "MPAs for fisheries & food" = "mpas_fishery",
                      "MPAs as coercive instruments" = "mpas_coercive",
                      "MPAs for external actors" = "mpas_for_external",
+                     "MPAs need capacity" = "mpas_need_capacity",
+                     "MPAs need compliance & support" = "mpas_need_support",
 )
 
 # Representing all proportions using a barplot
@@ -205,7 +209,9 @@ barplot = ggplot(df3) +
   scale_fill_manual(values = c("black", "light grey")) +
   theme_minimal()
 barplot + coord_flip()
+rm(df2,df3)
 ```
+
 # 5. Statistical analyses
 
 ```{r}

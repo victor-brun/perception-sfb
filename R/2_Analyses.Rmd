@@ -201,7 +201,6 @@ barplot = ggplot(df3) +
   theme_minimal()
 barplot + coord_flip()
 ```
-
 # 5. Statistical analyses
 
 ```{r}
@@ -241,7 +240,7 @@ positions %>%
   theme_minimal()
 
 # PERMANOVA
-perm <- adonis2(df[13:37] ~ Knowledge_NGO + Knowledge_MPA + Involved_project + Gender + Residence, data=df, permutations = 999, method = "bray")
+perm <- adonis2(df[13:37] ~ Knowledge_NGO + Knowledge_MPA + Involved_project + Gender + Residence + Fisher, data=df, permutations = 999, method = "bray")
 perm
 
 # RDA
@@ -249,7 +248,7 @@ rda <- rda(df[13:37], data = df, distance = "bray")
 plot(rda)
 
 # ANOVA on diversity of perceptions
-aov <- anova(lm(N_Perceptions ~ Knowledge_NGO + Knowledge_MPA + Involved_project + Gender + Residence, data=df))
+aov <- anova(lm(N_Perceptions ~ Knowledge_NGO + Knowledge_MPA + Involved_project + Gender + Residence + Fisher, data=df))
 aov
 
 ```

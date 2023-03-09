@@ -112,13 +112,15 @@ df_summary$Perception <- fct_recode(df_summary$Perception,
 )
 
 # Barplot
-ggplot(df_summary) +
+Plot_perceptions <- ggplot(df_summary) +
   aes(x = Perception, y = Total, fill = Theme) +
   geom_col(position = "dodge", alpha=.9) +
   labs(x = "", y = "Number of respondents", fill = "Category of perceptions") +
   theme_minimal() +
   scale_fill_manual(values = c("#E2A525", "#A51E23", "#A56F29", "#728857")) +
   coord_flip()
+Plot_perceptions
+ggsave("./../Output/Plot_perceptions.pdf", plot = Plot_perceptions, width = 7, height = 7)
 
 ```
 

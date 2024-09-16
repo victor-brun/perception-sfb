@@ -1,2 +1,2 @@
 # perception-sfb
-Studying the perceptions of local people on coastal management
+Brun et al. (2024), Assessing stakeholder perceptions to guide social and ecological fit of marine protected areas, iScience

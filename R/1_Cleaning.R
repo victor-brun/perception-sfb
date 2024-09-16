@@ -295,24 +295,6 @@ df2 = df2 %>%
                                    df$X5c_law==1 ~ 1,
                                    TRUE ~ 0))
 
-# MPAs need capacity
-df2 = df2 %>%
-  mutate(mpas_need_capacity = case_when(df$X5c_guard==1 ~ 1,
-                                   df$X5c_manage==1 ~ 1,
-                                   df$X5c_monitor==1 ~ 1,
-                                   df$X5c_include==1 ~ 1,
-                                   df$X5c_funds==1 ~ 1,
-                                   df$X5c_boundaries==1 ~ 1,
-                                   df$X5c_capacity==1 ~ 1,
-                                   TRUE ~ 0))
-
-# MPAs need compliance and support
-df2 = df2 %>%
-  mutate(mpas_need_support = case_when(df$X5c_comply==1 ~ 1,
-                                   df$X5c_support==1 ~ 1,
-                                   df$X5c_officials==1 ~ 1,
-                                   df$X5c_awareness==1 ~ 1,
-                                   TRUE ~ 0))
 
 ### EXPORTING CSV FILE
 write.csv(df, "Data/general_matrix_allperceptions.csv", row.names = FALSE)

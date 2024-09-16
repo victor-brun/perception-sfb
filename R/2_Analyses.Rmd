@@ -13,20 +13,30 @@ rm(list=ls()) ; library(tidyverse) ; library(ggplot2) ; library(plyr)
 library(vegan) ; library(glue)
 
 # Data
-df <-  read.csv("./../Data/general_matrix_synthesis.csv") # Matrix of perceptions grouped in themes
-df_all <- read.csv("./../Data/general_matrix_allperceptions.csv") # Matrix of all ungrouped perceptions (n = 149)
+df <-  read.csv("./../Data/general_matrix_synthesis.csv") %>%  # Matrix of perceptions grouped in themes
+  filter(Residence != "Puerto Princesa")
+
+df_all <- read.csv("./../Data/general_matrix_allperceptions.csv") %>%  # Matrix of all ungrouped perceptions (n = 149)
+  filter(Residence != "Puerto Princesa")
 ```
 
 # 2. Descriptive statistics
 
 ```{r}
-table(df$Gender) # F = 27, M = 39
+table(df$Gender) # F = 27, M = 37
 table(df$Residence) # Batas = 13, Depla = 13, Mabini = 13, Puerto Princesa = 2, Sandoval = 9, Silanga = 10, Taytay = 6
 table(df$Job_1)
 table(df$Job_2)
 table(df$Involved_project) # No = 36, Yes = 30
 table(df$Knowledge_NGO) # No = 38, Yes = 28
 table(df$Knowledge_MPA) # No = 5, Yes = 61
+length(which(df$Age<=30)) # 4
+length(which(df$Age>30 & df$Age<=50)) # 34
+length(which(df$Age>50)) # 21
+
+
+# Number of respondents saying different things:
+(sum(df_all$X3_illegaldec, na.rm=T)/66)*100 # Decrease in illegal fishing
 ```
 
 # 3. Number of respondents per perception
@@ -35,11 +45,12 @@ table(df$Knowledge_MPA) # No = 5, Yes = 61
 
 # Dataframe summary of all perceptions
 df_summary <-  df %>% 
-  select(13:39) %>%
+  select(13:37) %>%
   summarise_all(sum)
 df_summary <-  t(df_summary) %>% data.frame
 colnames(df_summary) <- "Total"
 df_summary$Perception <- rownames(df_summary)
+df_summary$Percent <- (df_summary$Total/66)*100
 
 # Relevel factors
 df_summary$Perception <- factor(df_summary$Perception, levels = c("value_livelihood",
@@ -64,10 +75,8 @@ df_summary$Perception <- factor(df_summary$Perception, levels = c("value_livelih
                                                     "solution_no",
                                                     "mpas_ecological_sustainability",
                                                     "mpas_for_locals",
-                                                    "mpas_need_capacity",
                                                     "mpas_fishery",
                                                     "mpas_coercive",
-                                                    "mpas_need_support",
                                                     "mpas_for_external"))
 df_summary$Perception <- fct_rev(df_summary$Perception)
 
@@ -106,9 +115,7 @@ df_summary$Perception <- fct_recode(df_summary$Perception,
                      "MPAs for local actors" = "mpas_for_locals",
                      "MPAs for fisheries & food" = "mpas_fishery",
                      "MPAs as coercive instruments" = "mpas_coercive",
-                     "MPAs for external actors" = "mpas_for_external",
-                     "MPAs need capacity" = "mpas_need_capacity",
-                     "MPAs need compliance & support" = "mpas_need_support",
+                     "MPAs for external actors" = "mpas_for_external"
 )
 
 # Barplot
@@ -214,7 +221,7 @@ barplot + coord_flip()
 rm(df2,df3)
 ```
 
-# 5. Statistical analyses
+# 5. PCoA and ANOVA
 
 ```{r}
 # Computing total number of perceptions per respondent
@@ -252,16 +259,73 @@ positions %>%
   scale_color_brewer(palette = "Set2") +
   theme_minimal()
 
-# PERMANOVA
-perm <- adonis2(df[13:37] ~ Knowledge_NGO + Knowledge_MPA + Involved_project + Gender + Residence + Fisher, data=df, permutations = 999, method = "bray")
-perm
-
-# RDA
-rda <- rda(df[13:37], data = df, distance = "bray")
-plot(rda)
 
 # ANOVA on diversity of perceptions
-aov <- anova(lm(N_Perceptions ~ Knowledge_NGO + Knowledge_MPA + Involved_project + Gender + Residence + Fisher, data=df))
+aov <- anova(lm(N_Perceptions ~ Involved_project + Knowledge_MPA + Gender + Residence + Fisher, data=df))
 aov
+```
+
+# 6. RDA
+
+```{r}
+# Computing RDA
+rda <- rda(df[13:37] ~ Involved_project + Knowledge_MPA + Gender + Residence + Fisher, data = df, distance = "bray")
+
+# Percent explained
+perc <- round(100*(summary(rda)$cont$importance[2, 1:2]), 2)
+
+# Extract scores 
+sc_si <- scores(rda, display="sites", choices=c(1,2), scaling=2)
+sc_sp <- scores(rda, display="species", choices=c(1,2), scaling=2)
+sc_bp <- scores(rda, display="bp", choices=c(1, 2), scaling=2)
+
+# Plot
+plot(rda,
+     scaling = 2, # set scaling type 
+     type = "none", # this excludes the plotting of any points from the results
+     frame = FALSE,
+     # set axis limits
+     xlim = c(-1,1), 
+     ylim = c(-1,1),
+     # label the plot (title, and axes)
+     main = "Triplot RDA - scaling 2",
+     xlab = paste0("RDA1 (", perc[1], "%)"), 
+     ylab = paste0("RDA2 (", perc[2], "%)") 
+)
+
+# Add points for sites scores (respondents)
+points(sc_si, 
+       pch = 21, # set shape (here, circle with a fill colour)
+       col = "black", # outline colour
+       bg = "steelblue", # fill colour
+       cex = 1.2)
+
+# Text labels for species (perceptions)
+text(sc_sp + c(0.03, 0.09), # adjust text coordinates to avoid overlap with points 
+     labels = rownames(sc_sp), 
+     col = "grey40", 
+     font = 2, # bold
+     cex = 0.6)
+
+# Arrows for explanatory variables
+arrows(0,0, # start them from (0,0)
+       sc_bp[,1], sc_bp[,2], # end them at the score value
+       col = "red", 
+       lwd = 3)
+
+# Labels for explanatory variables
+text(x = sc_bp[,1] -0.1, # adjust text coordinate to avoid overlap with arrow tip
+     y = sc_bp[,2] - 0.03, 
+     labels = rownames(sc_bp), 
+     col = "red", 
+     cex = 1, 
+     font = 2)
+
+# Statistical tests
+anova.cca(rda, permutations = 999) # Significance of the overall model
+anova.cca(rda, permutations = 999, by = "axis") # Significance of canonical axes
+anova.cca(rda, permutations = 999, by = "terms") # Significance of terms
+sqrt(vif.cca(rda)) # Checking for colineraity
 
 ```
+
